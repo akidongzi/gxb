@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    @include('mobile.partials.page-metas')
+    <title>视频专题 - 中华文化走出去网</title>
+    <link href="{{ asset('mobile/themes/css/base.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('mobile/themes/css/home.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('mobile/themes/css/icon.css') }}" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<section class="aui-flexView">
+    <!-- 头部信息 begin -->
+    <header class="aui-navBar">
+        <div class="aui-navBar-center aui-navbar-title">视频专题</div>
+        <a href="{{ route('mobile.search') }}">
+            <i class="aui-icon aui-icon-search"></i>
+        </a>
+    </header>
+
+    <!-- 头部信息 end -->
+    <article class="aui-news-list aui-list-item-wrapper aui-video-list-wrapper">
+
+    </article>
+
+    @include('mobile.partials.footer-nav')
+</section>
+<script src="{{ asset('mobile/themes/js/flexible.js') }}"></script>
+<script src="{{ asset('mobile/themes/js/jquery.min.js') }}"></script>
+<script src="{{ asset('mobile/themes/js/main.js') }}"></script>
+<script src="{{ asset('mobile/themes/js/video.js') }}"></script>
+</body>
+
+</html>

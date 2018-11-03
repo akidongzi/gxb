@@ -1,0 +1,43 @@
+.form-control-label {
+    font-weight:bold;
+}
+.form-control::-webkit-input-placeholder {
+    color:    #ccc;
+}
+.form-control:-moz-placeholder {
+    color:    #ccc;
+    opacity:  1;
+}
+.form-control::-moz-placeholder {
+    color:    #ccc;
+    opacity:  1;
+}
+.form-control:-ms-input-placeholder {
+    color: #ccc;
+}
+
+.form-control::-ms-input-placeholder {
+    color: #ccc;
+}
+.form-control::placeholder {
+    color: #ccc;
+    opacity: 1;
+}
+
+.meta-info {
+
+}
+.meta-info__table {
+    width:100%;
+}
+
+.meta-info__table th {
+    max-width:80px;
+    text-align:right;
+    vertical-align: middle;
+    background:#eee;
+    border-bottom:solid 1px #fff;
+}
+.meta-info__table td {
+    text-align: left;
+}
