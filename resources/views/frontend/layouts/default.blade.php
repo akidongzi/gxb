@@ -10,35 +10,39 @@
     <link rel="stylesheet" href="/front/css/reset.css?1122">
     <link rel="stylesheet" href="/front/css/swiper.min.css?1122">
     <link rel="stylesheet" href="/front/css/common.css?201810221713">
-    
+
     @yield('style')
     <!--[if IE]>
-        <script src="./js/html5shiv.min.js"></script>
+    <script src="./js/html5shiv.min.js"></script>
     <![endif]-->
 </head>
 
 <body>
-    <!-- S 网站公共头部 -->
-    @include('frontend.includes.header')
-    <!-- E 网站公共头部 -->
+<!-- S 网站公共头部 -->
+@include('frontend.includes.header')
+<!-- E 网站公共头部 -->
 
-    <!-- S 网站主体部分 -->
-    <div class="main">
-    @yield('content')
-    </div>
-    <!-- E 网站主体部分 -->
+<!-- S 网站主体部分 -->
+@if ($position->code=='HWPT')
+    <div class="main_hw" >
+        @else
+            <div class="main">
+                @endif
+                @yield('content')
+            </div>
+            <!-- E 网站主体部分 -->
 
-    <!-- S 网站公共尾部 -->
-    @include('frontend.includes.footer')
-    <!-- E 网站公共尾部 -->
+            <!-- S 网站公共尾部 -->
+        @include('frontend.includes.footer')
+        <!-- E 网站公共尾部 -->
 
-    <!-- S 右侧快捷功能 -->
-    <ul class="menu">
-        <!--<li class="menu__item menu__item_sweep"></li>-->
-        <li class="menu__item menu__item_star"></li>
-        <li class="menu__item menu__item_top"></li>
-    </ul>
-    <!-- E 右侧快捷功能 -->
+            <!-- S 右侧快捷功能 -->
+            <ul class="menu">
+                <!--<li class="menu__item menu__item_sweep"></li>-->
+                <li class="menu__item menu__item_star"></li>
+                <li class="menu__item menu__item_top"></li>
+            </ul>
+            <!-- E 右侧快捷功能 -->
 </body>
 @stack('before-scripts')
 <script src="/front/js/jquery-1.8.3.js"></script>
