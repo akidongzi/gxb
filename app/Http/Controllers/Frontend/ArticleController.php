@@ -12,68 +12,10 @@ use Plank\Metable\Meta;
 
 class ArticleController extends Controller
 {
-
-    /**
-     * 文章列表
-     *
-     * @param Request $request
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function defaultListResponse($request, $position)
+    protected function defaultListResponse($position)
     {
-        $data = [];
         $viewPath = 'frontend.list';
 
-        // 位置
-        $positionId = $request->get('position_id');
-        $position = Position::find($positionId);
-
-        if (!$position) {
-            exit;
-        }
-
-        if ($position->code == 'GD') {
-//            $viewPath = 'frontend.guandian-list';
-//            if ($request->get('new_tpl')) {
-                $viewPath = 'frontend.guandian-list-new';
-//            }
-        } else if ($position->code == 'HWPT') {
-            // 海外推荐头条
-            $zggtoutiaoPosition    = Position::where('code', 'ZGGTT')->first();
-
-            // 中国馆新闻
-            $zggTimePosition   = Position::where('code', 'ZGG')->first();
-            $zggTimePositionData = $zggTimePosition->getData(3);
-
-            // 中国文化中心
-            $zggwhTimePosition   = Position::where('code', 'ZGWHZX')->first();
-            $zggwhTimePositionData = $zggwhTimePosition->getData(3);
-            // 中国文化中心排行
-
-            // 孔子学院
-            $kzxyTimePosition   = Position::where('code', 'KZXY')->first();
-            $kzxyTimePositionData = $kzxyTimePosition->getData(6);
-
-            // 对外交流机构
-            $dwjlTimePosition   = Position::where('code', 'DWJLJG')->first();
-            $dwjlTimePositionData = $dwjlTimePosition->getData(6);
-
-            // 新闻要点
-            $newPointsPosition  = Position::where('code', 'QT')->first();
-
-            // 模块
-            $zgwhPosition       = $position->getBlockByPosition('ZGWHZX');
-
-//            print_r($newPointsPosition->getData(3)[0]->id); exit;
-            $data['zggtoutiaoPosition'] = $zggtoutiaoPosition;
-            $data['newPointsPosition'] = $newPointsPosition;
-            $data['zggTimePositionData'] = $zggTimePositionData;
-            $data['zggwhTimePositionData'] = $zggwhTimePositionData;
-            $data['kzxyTimePositionData'] = $kzxyTimePositionData;
-            $data['dwjlTimePositionData'] = $dwjlTimePositionData;
-            $data['zgwhPosition'] = $zgwhPosition;
-            $viewPath = 'frontend.zgg-list';
-        }
         // 模块
         $recommendPosition = $position->getBlockByPosition('JCTJ');
         $hotPosition       = $position->getBlockByPosition('RDPH');
@@ -93,7 +35,7 @@ class ArticleController extends Controller
         // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
 
-        return view($viewPath, array_merge([
+        return view($viewPath, [
             'list' => $query,
             'labels' => $labels,
             'recommendPosition' => $recommendPosition,
@@ -101,7 +43,7 @@ class ArticleController extends Controller
             'position' => $position,
             'loading'  => $loading,
 
-        ], $data));
+        ]);
     }
 
     protected function viewpointSubjectPageResponse($position)
@@ -124,18 +66,66 @@ class ArticleController extends Controller
 
         // 加载?
         $loading = $query->currentPage() == $query->lastPage() ? false : true;
+
         // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
-        return view($viewPath, array_merge([
+
+        return view($viewPath, [
             'list' => $query,
             'labels' => $labels,
             'recommendPosition' => $recommendPosition,
             'hotPosition' => $hotPosition,
             'position' => $position,
             'loading'  => $loading,
-        ], $data));
+
+        ]);
     }
 
+    protected function overseaPageResponse(Position $position)
+    {
+        $data = [];
+        // 导航
+        $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
+
+        // 海外推荐头条
+        $zggtoutiaoPosition    = Position::where('code', 'ZGGTT')->first();
+
+        // 中国馆新闻
+        $zggTimePosition   = Position::where('code', 'ZGG')->first();
+
+
+        // 中国文化中心
+        $zggwhTimePosition   = Position::where('code', 'ZGWHZX')->first();
+        $zggwhTimePositionData = $zggwhTimePosition->getData(3);
+        // 中国文化中心排行
+
+        // 孔子学院
+        $kzxyTimePosition   = Position::where('code', 'KZXY')->first();
+
+        // 对外交流机构
+        $dwjlTimePosition   = Position::where('code', 'DWJLJG')->first();
+        $dwjlTimePositionData = $dwjlTimePosition->getData(6);
+
+        // 新闻要点
+        $newPointsPosition  = Position::where('code', 'QT')->first();
+
+        // 模块
+        $zgwhPosition       = $position->getBlockByPosition('ZGWHZX');
+
+//            print_r($newPointsPosition->getData(3)[0]->id); exit;
+        $data['zggtoutiaoPosition'] = $zggtoutiaoPosition;
+        $data['newPointsPosition'] = $newPointsPosition;
+        $data['zggTimePosition'] = $zggTimePosition;
+        $data['zggwhTimePosition'] = $zggwhTimePosition;
+        $data['kzxyTimePosition'] = $kzxyTimePosition;
+        $data['dwjlTimePosition'] = $dwjlTimePosition;
+        $data['zgwhPosition'] = $zgwhPosition;
+        $data['position'] = $position;
+        $data['labels'] = $labels;
+        $viewPath = 'frontend.zgg-list';
+
+        return view($viewPath, $data);
+    }
 
 
     public function index_china(Request $request)
@@ -291,6 +281,11 @@ class ArticleController extends Controller
         ]);
     }
 
+    protected function outsideTheBoxSubjectPageResponse($position)
+    {
+
+    }
+
 
     public function index(Request $request)
     {
@@ -302,17 +297,27 @@ class ArticleController extends Controller
         }
 
         switch ($position->code) {
+            //观点
             case 'GD':
                 return $this->viewpointSubjectPageResponse($position);
                 break;
 
+            //交流活动
             case 'JLHD':
                 return $this->exchangeActivitySubjectPageResponse($position);
                 break;
 
+            case 'HWPT':
+                return $this->overseaPageResponse($position);
+                break;
+
+            //他山之石
+            case 'TSZS':
+                return $this->outsideTheBoxSubjectPageResponse($position);
+                break;
 
             default:
-                return $this->defaultListResponse($request,$position);
+                return $this->defaultListResponse($position);
                 break;
         }
     }
@@ -337,7 +342,7 @@ class ArticleController extends Controller
         // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
 
-         // 模块
+        // 模块
         $recommendPosition = Position::where('code', 'JCTJ')->first();
         $hotPosition       = Position::where('code', 'RDPH')->first();
 
@@ -366,12 +371,16 @@ class ArticleController extends Controller
             $query = $query->where('id', '>', $request->last_id);
         }
 
-        if (!empty($request->position_id) && !empty($position = Position::find($request->position_id))) {
+        if (! empty($request->luts)) {
+            $query = $query->where('published_at', '>', date('Y-m-d H:i:s', $request->luts));
+        }
+
+        if (! empty($request->position_id) && !empty($position = Position::find($request->position_id))) {
             $lableIds = $position
-                            ->labels
-                            ->pluck('id')
-                            ->unique()
-                            ->toArray();
+                ->labels
+                ->pluck('id')
+                ->unique()
+                ->toArray();
 
             $articleIds = ArticleRelLabel::whereIn('label_id', $lableIds)
                 ->pluck('article_id')
@@ -388,15 +397,16 @@ class ArticleController extends Controller
 
         $result = $query
             ->orderBy('sort', 'desc')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('published_at', 'desc')
             ->orderBy('id', 'desc')
             ->paginate(15);
 
         $last_id = 0;
+        $luts = 0;
         if ($result->count()) {
             $last_id = $result[0]['id'];
+            $luts = strtotime($result[0]['published_at']);
         }
-
 
         if (! empty($position)) {
             switch ($position->code) {
@@ -411,7 +421,7 @@ class ArticleController extends Controller
             }
         }
 
-        return response()->json(['StatusCode' => 200, 'ResultData' => $result, 'last_id'=>$last_id]);
+        return response()->json(['StatusCode' => 200, 'ResultData' => $result, 'last_id'=>$last_id, 'updated_at' => $luts]);
     }
 
     public function show(Article $article, Request $request)
@@ -427,12 +437,12 @@ class ArticleController extends Controller
         if ($position->code == 'GD') {
             $viewPath = 'frontend.guandian-info';
         }
-    
+
         // 版块
         $recommendPosition = $position->getBlockByPosition('JCTJ');
         $hotPosition       = $position->getBlockByPosition('RDPH');
 
-         // 导航
+        // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
 
         // pv
@@ -454,6 +464,7 @@ class ArticleController extends Controller
             'data'  => null,
             'error' => null,
         ];
+        request();
 
         try {
             $article = Article::find($id);
