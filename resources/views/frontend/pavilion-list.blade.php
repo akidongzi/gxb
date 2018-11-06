@@ -115,13 +115,16 @@
 
             <!--S 孔子学院-->
             @foreach ($sideArticle as $k=>$item)
-                <div class="focus-month focus-month_kzxy">
-                    <a target="_blank"  href="{{ route('frontend.articles.show', ['article' => $item->id, 'position_id' => $position->id]) }}">
-                        <img src="{{img_resize($item->banner_url, 280, 368) }}" alt="" width="280" height="368">
-                    </a>
-                </div>
+                @if($k <=1)
+                    <div class="focus-month focus-month_kzxy">
+                        <a target="_blank"  href="{{ route('frontend.articles.show', ['article' => $item->id, 'position_id' => $position->id]) }}">
+                            <img src="{{img_resize($item->banner_url, 280, 368) }}" alt="" width="280" height="368">
+                        </a>
+                    </div>
+            @endif
         @endforeach
         <!--E 孔子学院-->
+
             <!-- S 其他 -->
         @if ($qtposition)
             {!! $qtposition->getBlock() !!}
