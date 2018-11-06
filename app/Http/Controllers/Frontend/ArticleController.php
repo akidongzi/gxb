@@ -104,7 +104,6 @@ class ArticleController extends Controller
 
         // 对外交流机构
         $dwjlTimePosition   = Position::where('code', 'DWJLJG')->first();
-        $dwjlTimePositionData = $dwjlTimePosition->getData(6);
 
         // 新闻要点
         $newPointsPosition  = Position::where('code', 'QT')->first();
@@ -185,9 +184,9 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function pavilion(Request $request)
+    public function pavilion($position)
     {
-        $viewPath = 'frontend.list';
+        $viewPath = 'frontend.pavilion-list';
 
         // 位置
         $positionId = $request->get('position_id');
@@ -197,9 +196,9 @@ class ArticleController extends Controller
             exit;
         }
 
-        if( $position->code== "ZGG"){
-            $viewPath = 'frontend.pavilion-list';
-        }
+        $sideArticle = Article::whereIn("id", explode(",", $position->content_ids))
+            ->get();
+
         // 海外推荐头条
         $zggtoutiaoPosition    = Position::where('code', 'ZGGTT')->first();
         // 数据
@@ -218,10 +217,6 @@ class ArticleController extends Controller
         $recommendPosition = $position->getBlockByPosition('JCTJ');
         $hotPosition       = $position->getBlockByPosition('RDPH');
         $qtposition = $position->getBlockByPosition('QT');   //  其他
-        $zzgposition = $position->getBlockByPosition('ZGG');   //  中国馆
-        $zzgposition = $position->getBlockByPosition('ZGWHZX');   //中国文化中心
-        $zzgposition = $position->getBlockByPosition('KZXY');   // 孔子学院
-        $zzgposition = $position->getBlockByPosition('ZGG');   //  其他
 
         // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
@@ -231,10 +226,10 @@ class ArticleController extends Controller
             'labels' => $labels,
             'qtposition' => $qtposition,
             'recommendPosition' => $recommendPosition,
-            'zzgposition' => $zzgposition,
             'zggtoutiaoPosition ' => $zggtoutiaoPosition ,
             'position' => $position,
             'pposition' => $pposition,
+            'sideArticle' => $sideArticle,
             'loading'  => $loading,
 
         ]);
