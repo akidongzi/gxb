@@ -6,16 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\Traits\NewsBlock;
+use Illuminate\Support\Arr;
+use Plank\Metable\Metable;
 
 class Position extends Model
 {
     use SoftDeletes;
     use NewsBlock;
+    use Metable;
 
     // 不允许集体赋值的字段
     protected $guarded = [];
-
     protected $dates = ['deleted_at'];
+
+    const META_PAGE_EXT_DATA = 'page.ext_data';
 
     //根据内容发布时间来排序
     const SORT_BY_PUBLISH_TIME  = 0;
@@ -47,6 +51,26 @@ class Position extends Model
         self::SORT_DIRECTION_ASC    => '正序',
     ];
 
+    /**
+     * 获取position扩展数据
+     * 将点分格式的key转换成了数组结构
+     *
+     * @return array
+     */
+    public function getExtDataAttribute()
+    {
+        $ext = [];
+        $extData = $this->getMeta(self::META_PAGE_EXT_DATA);
+        if (! empty($extData)) {
+            foreach ($extData as $item) {
+                foreach ($item as $k => $v) {
+                    Arr::set($ext, $k, $v);
+                }
+            }
+        }
+
+        return $ext;
+    }
 
     public function getEditButtonAttribute()
     {

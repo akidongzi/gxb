@@ -14,6 +14,9 @@
     background: url(../images/cloud_pieces.png) repeat-x;
     background-size: 78px 46px;
 }
+.main-zgg{
+    margin-top: 80px;
+}
 .main_bread {
     width: 1190px;
     height: 100%;
@@ -26,6 +29,9 @@
     background:rgba(230,0,0,1);
     position: absolute;
     bottom: 0;
+}
+.main_bottom-line-zgg{
+    width: 130px;
 }
 .page-type_navbar {
     width: 1190px;

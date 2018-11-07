@@ -9,7 +9,7 @@
     overflow: hidden;
     height: 370px;
     background: url(../images/homepage-bg.png) no-repeat top center;
-    background-size: 3000px 370px;
+    background-size: 3000px 370px ;
     position: relative;
     z-index: 1;
 }

@@ -8,7 +8,7 @@
 <!-- 面包屑 -->
 <div class="main_navbar">
     <p class="main_bread pull-center">
-        首页 &gt;
+        首页 &gt; 
         <a href="/articles?position_id={{$position->id}}">{{$position->name}} </a>&gt; {{$article->title}}
         <i class="main_bottom-line"></i>
     </p>

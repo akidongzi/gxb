@@ -3,7 +3,7 @@
 @section('content')
 <div class="main minirefresh-wrap" id="minirefresh">
 	<div class="minirefresh-scroll">
-		<!-- <p class="update-number"></p> -->
+		<p class="update-number"></p>
 		<div class="index-list data-list" id="listdata">
 		</div>
 	</div>

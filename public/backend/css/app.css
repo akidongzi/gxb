@@ -41,3 +41,17 @@
 .meta-info__table td {
     text-align: left;
 }
+
+.pos-txt__remove, pos-img__remove {
+    margin-top:30px;
+}
+
+.pos-ext-item__border {
+    float:left;
+    height:80%;
+    width:5px;
+    margin-left: -25px;
+    margin-top:5%;
+    border: solid 1px #63c2de;
+    border-left: none;
+}

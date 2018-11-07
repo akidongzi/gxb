@@ -10,7 +10,11 @@
 @if ($toutiaoPosition)
 @foreach ($toutiaoPosition->getData() as $val)
 <div class="bannerbox">
-    <h2 class="main__banner-title"><a href="{{ route('frontend.articles.show', ['article' => $val->id, 'position_id'=>$toutiaoPosition->id]) }}" target="_blank">{{ mb_substr($val->title, 0, 20) . (mb_strlen($val->title) > 20 ? '...' : '') }}</a></h2>
+    <h2 class="main__banner-title">
+        <a href="{{ route('frontend.articles.show', ['article' => $val->id, 'position_id'=>$toutiaoPosition->id]) }}" target="_blank">
+            {{ mb_substr($val->title, 0, 20) . (mb_strlen($val->title) > 20 ? '...' : '') }}
+        </a>
+    </h2>
     <h4 class="main__banner-small pull-center">{{ mb_substr($val->brief, 0, 120) . (mb_strlen($val->brief) > 120 ? '...' : '') }}</h4>
 </div>
 @endforeach

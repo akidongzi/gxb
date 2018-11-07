@@ -103,9 +103,9 @@
         <!-- E 热点排行 -->
 
         <!-- S 精彩推荐 -->
-            @if ($recommendPosition)
-            {!! $recommendPosition->getBlock() !!}
-            @endif
+        @if ($recommendPosition)
+        {!! $recommendPosition->getBlock() !!}
+        @endif
         <!-- E 精彩推荐 -->
     </div>
     <!-- S 合作伙伴 -->

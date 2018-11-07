@@ -98,7 +98,7 @@ class ArticleController extends Controller
             $article->content = $request->get('content');
             $article->published_at = date('Y-m-d H:i:s');
             $article->fake_pv   = $request->get('fake_pv');
-            $article->type    = 1;
+            $article->type   = 1;
 
             $article->save();
 

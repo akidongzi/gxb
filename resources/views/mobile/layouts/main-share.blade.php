@@ -29,7 +29,7 @@
 	<link rel="stylesheet" href="{{ asset('mobile/css/layer.css') }}">
 	<link rel="stylesheet" href="{{ asset('mobile/css/minirefresh.css') }}">
 	<link rel="stylesheet" href="{{ asset('mobile/css/common.css?201810191423') }}">
-	<link rel="stylesheet" href="{{ asset('mobile/css/index.css?201811022255') }}">
+	<link rel="stylesheet" href="{{ asset('mobile/css/index.css?201811030024') }}">
 
 	<!-- endbuild -->
     @yield('html_head')
@@ -54,7 +54,7 @@
 <script src="{{ asset('mobile/scripts/layer.js') }}"></script>
 <script src="{{ asset('mobile/scripts/clipboard.min.js') }}"></script>
 <script src="{{ asset('mobile/scripts/public.js') }}"></script>
-<script src="{{ asset('mobile/scripts/common.js?201810191853') }}"></script>
+<script src="{{ asset('mobile/scripts/common.js?201811030024') }}"></script>
 <script src="{{ asset('mobile/themes/js/main.js') }}"></script>
 <!-- endbuild -->
 

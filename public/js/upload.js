@@ -2,7 +2,7 @@ jQuery.fn.extend({
     dccUploadFiles: function(uploadConf){
         var _this=this;
        var dccUpFunc = function(_uploadConf){
-           var newName=_this.find("input[type=file]").prop("name");
+           var newName= uploadConf.name || _this.find("input[type=file]").prop("name");
            var newInput = document.createElement("input");
            newInput.setAttribute("name",newName);
            newInput.setAttribute("type","hidden");

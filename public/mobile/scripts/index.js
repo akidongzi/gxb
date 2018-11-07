@@ -20,12 +20,14 @@ $(function () {
 		listDom = document.querySelector('#listdata'),
 		requestDelayTime = 600; // 请求延迟时间
 
-    page = 1;
-    last_id = 0;
+    var perPage = 15;
+    var page = 1;
+    var luts = 0;
 
     function renderList(data)
     {
         var template = '';
+        console.log('data:', data);
 
         for (let i in data) {
 
@@ -83,59 +85,64 @@ $(function () {
         return template;
     }
 
+    var pageData = [];
     var miniRefresh = new MiniRefresh({
         container: '#minirefresh',
         // 下拉刷新
 		down: {
 			callback: function() {
                 // ajax 请求
-                function loadData(handleData) {
-                    $.ajax({
-                        url:"/api/article_pages",
-                        type:"get",
-                        data:{
-                            "page":page,
-                            "type":TYPE,
-                            "last_id":last_id,
-                            "position_id": POSITION_ID
-                        },
-                        success:function(result) {
-                            if (result.last_id > 0) {
-                                last_id = result.last_id
+                $.ajax({
+                    url:"/api/article_pages",
+                    type:"get",
+                    data:{
+                        "page": 1,
+                        "type": TYPE,
+                        "luts": luts,
+                        "position_id": POSITION_ID
+                    },
+                    success:function(result) {
+                        var numUpdated = 0;
+                        if (result.updated_at > 0 && result.updated_at > luts) {
+                            luts = result.updated_at;
+                            var data = result.ResultData.data;
+
+                            if (luts == 0) {
+                                pageData = data;
+                            } else {
+                                for (var di = data.length - 1; di >=0; di --) {
+                                    pageData.unshift(data[di]);
+                                }
                             }
-                            // last_id = result.last_id
-
-                            res = handleData(result.ResultData.data);
-                            if (res == true) {
-                                page ++
+                            numUpdated = data.length;
+                            data = null;
+                            if (pageData.length > perPage) {
+                                pageData = pageData.slice(0, perPage - 1);
                             }
+
+                            page = 1;
                         }
-                    });
-                }
+                        var template = renderList(pageData);
 
-                loadData(function (data) {
-                    var template = renderList(data);
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            console.log("DDD:", listDom, template);
+                            appendTestData(listDom, template, true);
+                            miniRefresh.endDownLoading(true);
 
-                    setTimeout(function() {
-                        // 每次下拉刷新后，上拉的状态会被自动重置
-                        appendTestData(listDom, template, true);
-                        miniRefresh.endDownLoading(true);
+                            // 提示更新几条信息
+                            if (numUpdated > 0) {
+                                $('.update-number').text('为您更新了' + numUpdated + '篇文章').slideDown()
+                            } else {
+                                $('.update-number').text('没有更新的文章，请稍后再试').slideDown()
+                            }
+                            setTimeout(function () {
+                                $('.update-number').slideUp();
+                            }, 2000)
 
-                        // 提示更新几条信息
-                        if (data.length > 0) {
-                            $('.update-number').text('为您更新了'+data.length+'篇文章').slideDown()
-                        } else {
-                            $('.update-number').text('没有更新的文章，请稍后再试').slideDown()
-                        }
-                        setTimeout(function () {
-                            $('.update-number').slideUp();
-                        }, 2000)
-
-                    }, requestDelayTime);
-
-                    return true;
+                        }, requestDelayTime);
+                    }
                 });
-
 			}
         },
         // 上拉加载
@@ -144,7 +151,6 @@ $(function () {
 			callback: function() {
                 // ajax 请求
                 var keyword = YDUI.util.getQueryString('keyword');
-                data = [];
                 function loadData(handleData) {
                     $.ajax({
                         url:"/api/article_pages",
@@ -156,17 +162,22 @@ $(function () {
                             "title": keyword
                         },
                         success:function(result) {
+                            var resData = result.ResultData.data;
 
-                            if (result.last_id > 0) {
-                                last_id = result.last_id
+                            if (page == 1) {
+                                luts = result.updated_at;
+                                pageData = resData;
+                            } else {
+                                pageData.push.apply(pageData, resData);
                             }
+
                             var more = true;
                             if (page >= result.ResultData.last_page) {
                                 more = false;
                             }
-                            res = handleData(result.ResultData.data, more);
+                            res = handleData(resData, more);
                             if (res == true) {
-                                page++
+                                page ++;
                             }
                         }
                     });

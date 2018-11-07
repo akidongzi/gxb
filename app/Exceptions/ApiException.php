@@ -15,11 +15,13 @@ class ApiException extends \Exception
     public const ERR_SERVER_ERROR       = 500;
     public const ERR_SIGNATURE_MISMATCH = 403;
     public const ERR_BAD_REQUEST        = 400;
+    public const ERR_NOT_FOUND          = 404;
 
     public static $errorMap = [
         self::ERR_SERVER_ERROR          => '接口服务器错误',
         self::ERR_SIGNATURE_MISMATCH    => '接口签名错误',
         self::ERR_BAD_REQUEST           => '错误的请求',
+        self::ERR_NOT_FOUND             => '请求的资源没有找到',
     ];
 
     /**

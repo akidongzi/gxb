@@ -189,8 +189,6 @@ class ArticleController extends Controller
         $viewPath = 'frontend.pavilion-list';
 
         // 位置
-        $positionId = $request->get('position_id');
-        $position = Position::find($positionId);
         $pposition = Position::find($position->parent_id);
         if (!$position) {
             exit;
@@ -221,6 +219,7 @@ class ArticleController extends Controller
         // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
 
+
         return view($viewPath, [
             'list' => $query,
             'labels' => $labels,
@@ -230,6 +229,7 @@ class ArticleController extends Controller
             'position' => $position,
             'pposition' => $pposition,
             'sideArticle' => $sideArticle,
+            'ext_data' => $position->ext_data,
             'loading'  => $loading,
 
         ]);
@@ -303,9 +303,18 @@ class ArticleController extends Controller
                 break;
 
             case 'HWPT':
-                return $this->overseaPageResponse($position);
-                break;
-
+	        return $this->overseaPageResponse($position);
+	        break;
+            case 'ZGG':  // 海外平台=》中国馆
+	        return $this->pavilion($position);
+	        break;
+            case 'KZXY':// 海外平台=》孔子学院
+	        return $this->pavilion($position);
+	        break;
+            case 'ZGWHZX':// 海外平台=》中国文化中心
+	        return $this->pavilion($position);
+	        break;
+            
             //他山之石
             case 'TSZS':
                 return $this->outsideTheBoxSubjectPageResponse($position);
@@ -337,7 +346,7 @@ class ArticleController extends Controller
         // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
 
-        // 模块
+         // 模块
         $recommendPosition = Position::where('code', 'JCTJ')->first();
         $hotPosition       = Position::where('code', 'RDPH')->first();
 
@@ -372,10 +381,10 @@ class ArticleController extends Controller
 
         if (! empty($request->position_id) && !empty($position = Position::find($request->position_id))) {
             $lableIds = $position
-                ->labels
-                ->pluck('id')
-                ->unique()
-                ->toArray();
+                            ->labels
+                            ->pluck('id')
+                            ->unique()
+                            ->toArray();
 
             $articleIds = ArticleRelLabel::whereIn('label_id', $lableIds)
                 ->pluck('article_id')
@@ -432,12 +441,12 @@ class ArticleController extends Controller
         if ($position->code == 'GD') {
             $viewPath = 'frontend.guandian-info';
         }
-
+    
         // 版块
         $recommendPosition = $position->getBlockByPosition('JCTJ');
         $hotPosition       = $position->getBlockByPosition('RDPH');
 
-        // 导航
+         // 导航
         $labels = Position::where(['stage' => 1, 'nav_show' => 1])->orderBy('sort')->get();
 
         // pv

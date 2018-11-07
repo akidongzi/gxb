@@ -8,6 +8,8 @@ use App\Models\Position;
 use App\Models\Block;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Arr;
+use Overtrue\Pinyin\Pinyin;
 
 class PositionController extends Controller
 {
@@ -60,9 +62,10 @@ class PositionController extends Controller
      */
     public function store(PositionRequest $request)
     {
-        Position::create([
+        $pinyin = new Pinyin();
+        $position = Position::create([
             'name'      => $request->name,
-            'code'      => $request->code ?? '',
+            'code'      => strtoupper($pinyin->abbr($request->name, PINYIN_KEEP_NUMBER)),
             'stage'     => $request->stage,
             'parent_id' => $request->parent_id,
             'nav_show'  => $request->nav_show ?? 2,
@@ -70,6 +73,29 @@ class PositionController extends Controller
             'sort'      => $request->sort ?? 0,
             'block_id'  => $request->block_id ?? 0,
         ]);
+
+        $extData = [];
+        $posTxtKeys = $request->get('pos_text_key');
+        if (! empty($posTxtKeys)) {
+            $posTxtKeys = array_filter($posTxtKeys);
+            $posTxtValues = $request->get('pos_text_value');
+            if (! empty($posTxtKeys) && count($posTxtKeys) == count($posTxtValues)) {
+                $extData['txt'] = array_combine($posTxtKeys, $posTxtValues);
+            }
+        }
+
+        $posImgKeys = $request->get('pos_img_key');
+        if (! empty($posImgKeys)) {
+            $posImgKeys = array_filter($posImgKeys);
+            $posImgValues = $request->get('pos_img_value');
+            if (! empty($posImgKeys) && count($posImgKeys) == count($posImgValues)) {
+                $extData['img'] = array_combine($posImgKeys, $posImgValues);
+            }
+        }
+
+        if (! empty($extData)) {
+            $position->setMeta(Position::META_PAGE_EXT_DATA, $extData);
+        }
 
         return redirect()->route('admin.positions.index')->withFlashSuccess('创建位置成功');
     }
@@ -85,11 +111,13 @@ class PositionController extends Controller
     {
         $parents = Position::where(['stage' => 1])->get();
         $blocks  = Block::get();
+        $extData = $position->getMeta(Position::META_PAGE_EXT_DATA);
 
         return view('backend.position.edit', [
             'position' => $position,
             'parents'  => $parents,
             'blocks'   => $blocks,
+            'ext_data' => $extData,
         ]);
     }
 
@@ -103,17 +131,44 @@ class PositionController extends Controller
      */
     public function update(Position $position, PositionRequest $request)
     {
-        Position::where(['id' => $position->id])->update([
+        $data = [
             'name'      => $request->name,
             'stage'     => $request->stage,
-            'code'      => $request->code ?? '',
             'parent_id' => $request->parent_id,
             'nav_show'  => $request->nav_show ?? 2,
             'sort'      => $request->sort ?? 0,
             'msort'     => $request->msort ?? 0,
             'block_id'  => $request->block_id ?? 0,
-        ]);
+        ];
+        if ($request->name != $position->name) {
+            $pinyin = new Pinyin();
+            $data['code'] = strtoupper($pinyin->abbr($request->name, PINYIN_KEEP_NUMBER));
+        }
 
+        $extData = [];
+        $posTxtKeys = $request->get('pos_text_key');
+        if (! empty($posTxtKeys)) {
+            $posTxtKeys = array_filter($posTxtKeys);
+            $posTxtValues = $request->get('pos_text_value');
+            if (! empty($posTxtKeys) && count($posTxtKeys) == count($posTxtValues)) {
+                $extData['txt'] = array_combine($posTxtKeys, $posTxtValues);
+            }
+        }
+
+        $posImgKeys = $request->get('pos_img_key');
+        if (! empty($posImgKeys)) {
+            $posImgKeys = array_filter($posImgKeys);
+            $posImgValues = $request->get('pos_img_value');
+            if (! empty($posImgKeys) && count($posImgKeys) == count($posImgValues)) {
+                $extData['img'] = array_combine($posImgKeys, $posImgValues);
+            }
+        }
+
+        if (! empty($extData)) {
+            $position->setMeta(Position::META_PAGE_EXT_DATA, $extData);
+        }
+
+        Position::where(['id' => $position->id])->update($data);
         return redirect()->route('admin.positions.index')->withFlashSuccess('修改位置成功');
     }
 

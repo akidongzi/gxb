@@ -68,7 +68,6 @@ trait NewsBlock
 			return;
 		}
 		$query = $this->getDataBuild($this);
-
 		$view =\View::make($block->tpl, [
 			'title'     => $block->title,
 			'data'      => $query->get(),
@@ -94,7 +93,9 @@ trait NewsBlock
 		if ($position->content_ids) {
 			$arrId = explode(',', $position->content_ids);
 		}
+
 		$arrLableId = $position->labels->pluck('id')->unique()->toArray();
+
 		if ($arrId) {
 			 //数量及排序按输入确定
 			$query = $this->_getBuildBySpecialId($arrId);

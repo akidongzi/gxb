@@ -23,7 +23,9 @@
     <!-- E 网站公共头部 -->
 
     <!-- S 网站主体部分 -->
+
     <div class="main">
+    
     <?php echo $__env->yieldContent('content'); ?>
     </div>
     <!-- E 网站主体部分 -->
